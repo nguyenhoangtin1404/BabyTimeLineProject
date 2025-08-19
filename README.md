@@ -1,22 +1,26 @@
-# Lịch sinh hoạt của Minh Anh
+# Lịch Sinh Hoạt Hằng Ngày của Minh Anh
 
-Đây là một ứng dụng web đơn giản giúp quản lý lịch sinh hoạt hằng ngày cho bé, sử dụng HTML, Tailwind CSS (CDN), Alpine.js (CDN) và JavaScript thuần.
+Một ứng dụng web đơn giản để quản lý lịch trình hằng ngày của Minh Anh, xây dựng bằng HTML, Tailwind CSS (CDN), Alpine.js (CDN) và JavaScript thuần.
 
-## Cách sử dụng
-- Mở file `index.html` bằng trình duyệt web bất kỳ để sử dụng ứng dụng.
-- Không cần cài đặt thêm bất kỳ phần mềm nào.
+## Hướng Dẫn Sử Dụng
 
-## Tính năng chính
-- Chọn preset lịch hoặc tuỳ chỉnh khung giờ.
-- Chế độ lịch theo tuần (đi học/ở nhà).
-- Checklist hoạt động trong ngày, tự động đánh dấu hoàn thành.
-- Thông báo, chuông, nhắc trước khung giờ tiếp theo.
-- Lưu dữ liệu bằng localStorage trên trình duyệt.
+- Mở file `index.html` trên bất kỳ trình duyệt web nào để bắt đầu sử dụng ứng dụng.
+- Không cần cài đặt hay phần mềm bổ sung.
 
-## Công nghệ sử dụng
+## Tính Năng
+
+- Chọn lịch trình mẫu hoặc tùy chỉnh khung giờ theo ý muốn.
+- Chế độ xem lịch tuần (trường/học ở nhà).
+- Danh sách kiểm tra hoạt động trong ngày với đánh dấu hoàn thành tự động.
+- Thông báo, báo thức và nhắc nhở cho các hoạt động sắp tới.
+- Dữ liệu được lưu trữ cục bộ trên trình duyệt bằng localStorage.
+
+## Công Nghệ Sử Dụng
+
 - [Tailwind CSS](https://tailwindcss.com/) (CDN)
 - [Alpine.js](https://alpinejs.dev/) (CDN)
 
-## Ghi chú
-- Ứng dụng không yêu cầu backend, chỉ chạy phía client.
-- Dữ liệu sẽ mất khi xoá cache trình duyệt hoặc đổi máy.
+## Lưu Ý
+
+- Ứng dụng hoàn toàn chạy phía client, không cần backend.
+- Dữ liệu sẽ bị mất nếu xóa bộ nhớ cache trình duyệt hoặc chuyển sang thiết bị khác.
