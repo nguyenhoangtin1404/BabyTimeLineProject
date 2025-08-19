@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lịch sinh hoạt + Thời tiết hiện đại</title>
+
+    <!-- Google Font -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    />
+
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+      }
+      .shimmer {
+        position: relative;
+        overflow: hidden;
+      }
+      .shimmer::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        transform: translateX(-100%);
+        background: linear-gradient(
+          90deg,
+          rgba(255, 255, 255, 0),
+          rgba(255, 255, 255, 0.6),
+          rgba(255, 255, 255, 0)
+        );
+        animation: shimmer 1.4s infinite;
+      }
+      @keyframes shimmer {
+        100% {
+          transform: translateX(100%);
+        }
+      }
+      @keyframes floaty {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-4px);
+        }
+      }
+      .floaty {
+        animation: floaty 3s ease-in-out infinite;
+      }
+      .spin-on-hover:hover {
+        transform: rotate(180deg);
+        transition: transform 0.5s ease;
+      }
+    </style>
+  </head>
+  <body class="bg-slate-50 min-h-screen p-4 flex flex-col items-center">
+    <!-- Clock + Weather -->
+    <div class="w-full max-w-2xl grid gap-4 md:grid-cols-2">
+      <!-- Clock -->
+      <div
+        class="bg-white rounded-2xl shadow p-4 md:p-6 flex flex-col items-center justify-center"
+      >
+        <div
+          id="clock"
+          class="text-4xl md:text-5xl font-bold tracking-tight"
+        ></div>
+        <div id="dateStr" class="mt-2 text-slate-600 text-sm"></div>
+      </div>
+    </div>
+
+    <script>
+      /* Clock */
+      const viDay = (d) =>
+        ["Chủ nhật", "Thứ 2", "Thứ 3", "Thứ 4", "Thứ 5", "Thứ 6", "Thứ 7"][
+          d.getDay()
+        ];
+      const pad = (n) => String(n).padStart(2, "0");
+      function setText(id, val) {
+        const el = document.getElementById(id);
+        if (el) el.textContent = val;
+      }
+      function renderClock() {
+        const now = new Date();
+        setText(
+          "clock",
+          now.toLocaleTimeString("vi-VN", {
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+          })
+        );
+        setText(
+          "dateStr",
+          `${viDay(now)}, ${pad(now.getDate())}/${pad(
+            now.getMonth() + 1
+          )}/${now.getFullYear()}`
+        );
+      }
+      setInterval(renderClock, 1000);
+      renderClock();
+
+      /* Weather */
+      const wx = {
+        loadingEl: document.getElementById("wxLoading"),
+        contentEl: document.getElementById("wxContent"),
+        errorEl: document.getElementById("wxError"),
+        emojiEl: document.getElementById("wxEmoji"),
+        tempEl: document.getElementById("wxTemp"),
+        textEl: document.getElementById("wxText"),
+        updatedEl: document.getElementById("wxUpdated"),
+        refreshBtn: document.getElementById("wxRefresh"),
+      };
+      function wxMap(code) {
+        const M = {
+          0: ["Trời quang", "☀️"],
+          1: ["Nắng nhẹ", "🌤️"],
+          2: ["Ít mây", "⛅"],
+          3: ["Nhiều mây", "☁️"],
+          45: ["Sương mù", "🌫️"],
+          61: ["Mưa nhẹ", "🌧️"],
+          63: ["Mưa vừa", "🌧️"],
+          65: ["Mưa to", "🌧️"],
+          95: ["Dông", "⛈️"],
+        };
+        return M[code] || ["Thời tiết", "🌤️"];
+      }
+      async function fetchWeather(lat, lon) {
+        wx.loadingEl.classList.remove("hidden");
+        wx.contentEl.classList.add("hidden");
+        wx.errorEl.classList.add("hidden");
+        try {
+          const res = await fetch(
+            `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true&timezone=auto`
+          );
+          const data = await res.json();
+          const cur = data?.current_weather;
+          if (!cur) throw new Error();
+          const [text, emoji] = wxMap(Number(cur.weathercode || 0));
+          wx.emojiEl.textContent = emoji;
+          wx.tempEl.textContent = Math.round(cur.temperature);
+          wx.textEl.textContent = text;
+          wx.updatedEl.textContent = new Date().toLocaleTimeString("vi-VN", {
+            hour: "2-digit",
+            minute: "2-digit",
+          });
+          wx.loadingEl.classList.add("hidden");
+          wx.contentEl.classList.remove("hidden");
+        } catch (e) {
+          wx.loadingEl.classList.add("hidden");
+          wx.errorEl.classList.remove("hidden");
+        }
+      }
+      function getWeather() {
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(
+            (pos) => fetchWeather(pos.coords.latitude, pos.coords.longitude),
+            (_) => fetchWeather(10.7769, 106.7009)
+          );
+        } else fetchWeather(10.7769, 106.7009);
+      }
+      getWeather();
+      setInterval(getWeather, 30 * 60 * 1000);
+      wx.refreshBtn.addEventListener("click", getWeather);
+    </script>
+  </body>
+</html>
